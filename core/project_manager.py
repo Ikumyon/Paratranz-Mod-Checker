@@ -1,8 +1,9 @@
 import json
+import sys
 from pathlib import Path
 
 class ProjectManager:
-    PROJECTS_FILE = Path(__file__).parent.parent / "data" / "projects.json"
+    PROJECTS_FILE = Path(sys.argv[0]).resolve().parent / "data" / "projects.json"
 
     @classmethod
     def load_projects(cls):

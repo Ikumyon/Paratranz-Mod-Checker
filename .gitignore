@@ -16,3 +16,8 @@ data/
 # IDE settings
 .vscode/
 .idea/
+
+# PyInstaller
+build/
+dist/
+*.spec

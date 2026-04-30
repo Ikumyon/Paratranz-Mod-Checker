@@ -3,6 +3,7 @@ from PySide6.QtUiTools import QUiLoader
 from PySide6.QtCore import QFile, Qt, QObject, Signal, QTranslator
 from PySide6.QtWidgets import QMessageBox
 import requests
+import sys
 from core.config_manager import ConfigManager
 
 class SettingsDialog(QObject):
@@ -64,7 +65,7 @@ class SettingsDialog(QObject):
         self.cb_localization.clear()
         self.cb_localization.addItem(self.tr("System Default"), "")
         
-        loc_dir = Path(__file__).parent.parent / "localization"
+        loc_dir = Path(sys.argv[0]).resolve().parent / "localization"
         if loc_dir.exists():
             for qm_file in loc_dir.glob("*.qm"):
                 lang_code = qm_file.stem

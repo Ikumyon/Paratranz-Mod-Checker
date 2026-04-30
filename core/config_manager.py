@@ -1,8 +1,9 @@
 import json
+import sys
 from pathlib import Path
 
 class ConfigManager:
-    CONFIG_FILE = Path(__file__).parent.parent / "data" / "config.json"
+    CONFIG_FILE = Path(sys.argv[0]).resolve().parent / "data" / "config.json"
 
     @classmethod
     def load_config(cls):

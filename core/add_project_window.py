@@ -6,6 +6,7 @@ from PySide6.QtGui import QPixmap, QCursor
 import requests
 import re
 import json
+import sys
 from datetime import datetime
 from core.game_manager import GameManager
 from core.config_manager import ConfigManager
@@ -78,7 +79,7 @@ class AddProjectDialog(QObject):
     def _log_api_response(self, endpoint, status_code, data):
         """APIのレスポンスをログファイルに追記する"""
         try:
-            log_path = Path(__file__).parent.parent / "data" / "api_history.log"
+            log_path = Path(sys.argv[0]).resolve().parent / "data" / "api_history.log"
             timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             log_entry = {
                 "timestamp": timestamp,
@@ -167,7 +168,7 @@ class AddProjectDialog(QObject):
                 # アイコンの更新（ロゴURLがある場合）
                 logo_url = project.get("logo")
                 project_id_str = str(project_id)
-                logos_dir = Path(__file__).parent.parent / "assets" / "logos"
+                logos_dir = Path(sys.argv[0]).resolve().parent / "data" / "logos"
                 local_logo_path = logos_dir / f"project_{project_id_str}.png"
 
                 if logo_url:

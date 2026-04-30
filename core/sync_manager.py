@@ -5,10 +5,11 @@ import zipfile
 import io
 from pathlib import Path
 from datetime import datetime
+import sys
 from core.config_manager import ConfigManager
 
 class SyncManager:
-    CACHE_FILE = Path(__file__).parent.parent / "data" / "sync_cache.json"
+    CACHE_FILE = Path(sys.argv[0]).resolve().parent / "data" / "sync_cache.json"
 
     @staticmethod
     def calculate_hash(file_path):
@@ -324,7 +325,7 @@ class SyncManager:
     def _log_api(endpoint, project_id, status_code, data):
         """APIのレスポンスをログファイルに追記する"""
         try:
-            log_path = Path(__file__).parent.parent / "data" / "api_history.log"
+            log_path = Path(sys.argv[0]).resolve().parent / "data" / "api_history.log"
             timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             log_entry = {
                 "timestamp": timestamp,

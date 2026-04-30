@@ -1,4 +1,5 @@
 import json
+import sys
 from pathlib import Path
 from typing import List, Dict, Optional, Any
 
@@ -9,7 +10,7 @@ class GameManager:
     def load_games(cls) -> List[Dict[str, Any]]:
         """games.jsonからゲーム一覧を読み込む（キャッシュ付き）"""
         if cls._games is None:
-            json_path = Path(__file__).parent.parent / "data" / "games.json"
+            json_path = Path(sys.argv[0]).resolve().parent / "data" / "games.json"
             if json_path.exists():
                 try:
                     with open(json_path, "r", encoding="utf-8") as f:

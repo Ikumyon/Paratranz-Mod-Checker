@@ -313,7 +313,8 @@ class MainWindow(QObject):
         return BASE_DIR / "assets" / "icons" / filename
 
     def _project_icon_path(self, project_id: Any) -> Path:
-        icon_path = BASE_DIR / "assets" / "logos" / f"project_{project_id}.png"
+        data_dir = Path(sys.argv[0]).resolve().parent / "data"
+        icon_path = data_dir / "logos" / f"project_{project_id}.png"
         if icon_path.exists():
             return icon_path
         return BASE_DIR / "assets" / "placeholder.png"
@@ -1099,11 +1100,13 @@ def apply_translation(app: QApplication):
         lang_code = QLocale.system().name()
         
         # システム言語のファイルが存在しない場合は en_US をデフォルトにする
-        if not (BASE_DIR / "localization" / f"{lang_code}.qm").exists():
+        loc_dir = Path(sys.argv[0]).resolve().parent / "localization"
+        if not (loc_dir / f"{lang_code}.qm").exists():
             lang_code = "en_US"
 
     _translator = QTranslator()
-    qm_path = BASE_DIR / "localization" / f"{lang_code}.qm"
+    loc_dir = Path(sys.argv[0]).resolve().parent / "localization"
+    qm_path = loc_dir / f"{lang_code}.qm"
     
     if qm_path.exists():
         if _translator.load(str(qm_path)):
