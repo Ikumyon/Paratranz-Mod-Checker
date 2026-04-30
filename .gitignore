@@ -1,0 +1,18 @@
+# Python compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Project specific data and logs
+data/
+*.json
+*.log
+
+# IDE settings
+.vscode/
+.idea/

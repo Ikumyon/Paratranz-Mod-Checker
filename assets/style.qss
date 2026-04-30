@@ -1,0 +1,231 @@
+/* 
+ * プロジェクトカードのスタイル (ライト/ダークモード対応版)
+ * ハードコードされた色を廃止し、Qtのシステムパレット定数を使用します。
+ */
+
+/* プロジェクトカードの基本スタイル */
+QFrame#projectCard {
+    background-color: palette(base); /* 背景色(window)より一段階明るい、または入力欄と同じ背景色 */
+    border: 1px solid palette(mid);
+    border-radius: 12px;
+    margin: 4px;
+}
+
+/* ホバー時の効果 */
+QFrame#projectCard:hover {
+    background-color: palette(alternate-base); /* 少し落ち着いた背景色 */
+    border: 1px solid palette(highlight); /* アクセントカラーで縁取り */
+}
+
+/* カード内のタイトルラベル */
+QLabel#projectTitle {
+    font-size: 18px;
+    font-weight: bold;
+    color: palette(text);
+    background: transparent;
+}
+
+/* カード内の更新日時ラベル (少し控えめな色に) */
+QLabel#projectUpdate {
+    color: palette(text);
+    font-size: 11px;
+    background: transparent;
+}
+
+/* カード内の説明文ラベル */
+QLabel#projectDesc {
+    color: palette(text);
+    font-size: 13px;
+    background: transparent;
+}
+
+/* 削除ボタンのスタイル */
+QToolButton#deleteButton {
+    border: none;
+    border-radius: 6px;
+    padding: 4px;
+    background-color: transparent;
+}
+
+QToolButton#deleteButton:hover {
+    background-color: palette(midlight);
+}
+
+/* ゲームタグボタンのスタイル */
+
+
+QToolButton#gameTagButton:hover {
+    background-color: palette(midlight);
+}
+
+/* アイコンラベルの背景（透過設定） */
+QLabel#lblProjectIcon {
+    background: transparent;
+}
+
+/* リストウィジェット（サイドバー）のスタイル */
+QListWidget#listWidget {
+    background-color: transparent;
+    border: none;
+    outline: none; /* フォーカス時の点線を消す */
+    padding: 5px;
+}
+
+/* リストアイテムの基本スタイル */
+QListWidget#listWidget::item {
+    height: 40px;
+    padding-left: 15px;
+    border-radius: 8px;
+    margin-bottom: 2px;
+    color: palette(text);
+}
+
+/* ホバー時 */
+QListWidget#listWidget::item:hover {
+    background-color: palette(alternate-base);
+}
+
+/* 選択時 */
+QListWidget#listWidget::item:selected {
+    background-color: palette(highlight);
+    color: palette(highlighted-text);
+}
+
+/* テーブル全体のスタイル設定 */
+QTableWidget#tableSync {
+    gridline-color: transparent; /* セル間の格子線を消す */
+    outline: none;
+}
+
+/* テーブルヘッダーのスタイル（縦線を消す） */
+QHeaderView::section {
+    background-color: transparent;
+    border: none; /* 縦線を消去 */
+    border-bottom: 1px solid palette(midlight); /* 下線のみ表示 */
+    padding: 8px;
+    font-weight: bold;
+    color: palette(text);
+}
+
+/* テーブル内の各アイテム（行の区切り線） */
+QTableWidget#tableSync::item {
+    border-bottom: 1px solid palette(midlight); /* ダークモードでより白く見えるように調整 */
+    padding: 5px;
+    color: palette(text);
+}
+
+
+/* --- 追加: 重複整理分 --- */
+
+/* ゲームフィルタ枠 */
+QFrame#frameGameFilter {
+    border: 1px solid palette(mid);
+    border-radius: 6px;
+    background-color: palette(base);
+}
+
+/* フィルタボタン */
+QFrame#frameGameFilter QToolButton {
+    border: none;
+    border-radius: 4px;
+    background-color: transparent;
+    padding: 2px 8px;
+    color: palette(text);
+    text-align: left;
+}
+
+QFrame#frameGameFilter QToolButton:hover {
+    background-color: palette(midlight);
+}
+
+QFrame#frameGameFilter QToolButton:checked {
+    background-color: palette(highlight);
+    color: palette(highlighted-text);
+}
+
+
+/* 権限・接続ステータスラベル（カスタムプロパティによる切り替え） */
+QLabel#labelPermissionStatus[status="default"], QLabel#labelStatus[status="default"] { color: palette(mid); }
+QLabel#labelPermissionStatus[status="ok"], QLabel#labelStatus[status="ok"] { color: #2ECC71; font-weight: bold; }
+QLabel#labelPermissionStatus[status="warning"], QLabel#labelStatus[status="warning"] { color: #F1C40F; font-weight: bold; }
+QLabel#labelPermissionStatus[status="error"], QLabel#labelStatus[status="error"] { color: #E74C3C; font-weight: bold; }
+
+/* プロジェクト追加画面のアイコン枠 */
+QLabel#lblIcon {
+    border: 1px solid palette(mid);
+    background-color: palette(alternate-base);
+    border-radius: 4px;
+}
+
+/* --- サイドパネル (プロジェクト詳細) --- */
+
+/* パネル本体: 左側に境界線を引き、背景をウィンドウ色に設定 */
+QFrame#frameSidePanel {
+    background-color: palette(window);
+    border-left: 1px solid palette(midlight);
+}
+
+/* ヘッダーのボタン (閉じる・リンク): カードのボタンと統一感を持たせる */
+QToolButton#btnSideClose, QToolButton#btnSideLink {
+    border: none;
+    border-radius: 4px;
+    padding: 4px;
+    background-color: transparent;
+}
+
+QToolButton#btnSideClose:hover, QToolButton#btnSideLink:hover {
+    background-color: palette(midlight);
+}
+
+/* 詳細説明エリア: 背景を透過させ、スクロールバーのみ表示 */
+QTextBrowser#textBrowserSideDesc {
+    background-color: transparent;
+    border: none;
+    color: palette(text);
+}
+
+/* プロジェクト登録解除ボタン: 警告の意味を込めて赤色ベースに */
+QPushButton#btnSideDeleteAction {
+    color: #E74C3C; /* 既存の警告色(E74C3C)と統一 */
+    border: 1px solid #E74C3C;
+    border-radius: 6px;
+    padding: 8px;
+    background-color: transparent;
+    font-weight: bold;
+}
+
+QPushButton#btnSideDeleteAction:hover {
+    background-color: #E74C3C;
+    color: white;
+}
+
+/* グループボックス: 枠線を少し控えめに */
+QGroupBox#groupSideStats, QGroupBox#groupSideSettings {
+    font-weight: bold;
+    border: 1px solid palette(midlight);
+    border-radius: 8px;
+    margin-top: 10px;
+    padding-top: 15px;
+    color: palette(text);
+}
+
+QGroupBox#groupSideStats::title, QGroupBox#groupSideSettings::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    left: 10px;
+    padding: 0 3px;
+}
+
+/* --- 通知バッジ --- */
+QLabel#badgeLabel {
+    background-color: #E74C3C;
+    color: white;
+    border-radius: 10px;
+    padding: 0px 2px;
+    font-size: 11px;
+    font-weight: bold;
+    min-width: 20px;
+    min-height: 20px;
+    max-height: 20px;
+    margin-right: 5px;
+}

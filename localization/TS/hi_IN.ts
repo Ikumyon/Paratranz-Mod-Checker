@@ -1,0 +1,381 @@
+<?xml version='1.0' encoding='utf-8'?>
+<TS version="2.1" language="hi_IN" sourcelanguage="ja_JP">
+    <context>
+        <name>Language</name>
+        <message>
+            <source>Language Name</source>
+            <translation>हिन्दी</translation>
+        </message>
+    </context>
+    <context>
+        <name>AddProjectPage</name>
+        <message>
+            <location filename="../ui/add_project_page.ui" line="14" />
+            <source>Form</source>
+            <translation>Form</translation>
+        </message>
+        <message>
+            <location filename="../ui/add_project_page.ui" line="32" />
+            <source>Paratranz連携</source>
+            <translation>Paratranz एकीकरण</translation>
+        </message>
+        <message>
+            <location filename="../ui/add_project_page.ui" line="40" />
+            <source>プロジェクトURL/ID</source>
+            <translation>प्रोजेक्ट URL/ID</translation>
+        </message>
+        <message>
+            <location filename="../ui/add_project_page.ui" line="49" />
+            <source>例: 12345</source>
+            <translation>उदाहरण: 12345</translation>
+        </message>
+        <message>
+            <location filename="../ui/add_project_page.ui" line="65" />
+            <source>情報取得</source>
+            <translation>जानकारी प्राप्त करें</translation>
+        </message>
+        <message>
+            <location filename="../ui/add_project_page.ui" line="74" />
+            <source>プロジェクト名</source>
+            <translation>प्रोजेक्ट नाम</translation>
+        </message>
+        <message>
+            <location filename="../ui/add_project_page.ui" line="84" />
+            <source>自動で取得されます</source>
+            <translation>स्वचालित रूप से प्राप्त किया जाएगा</translation>
+        </message>
+        <message>
+            <location filename="../ui/add_project_page.ui" line="91" />
+            <source>権限</source>
+            <translation>अनुमति</translation>
+        </message>
+        <message>
+            <location filename="../ui/add_project_page.ui" line="98" />
+            <source>TextLabel</source>
+            <translation>TextLabel</translation>
+        </message>
+        <message>
+            <location filename="../ui/add_project_page.ui" line="107" />
+            <source>アイコン</source>
+            <translation>आइकन</translation>
+        </message>
+        <message>
+            <location filename="../ui/add_project_page.ui" line="117" />
+            <source>ローカル設定</source>
+            <translation>स्थानीय सेटिंग्स</translation>
+        </message>
+        <message>
+            <location filename="../ui/add_project_page.ui" line="123" />
+            <source>対象ゲーム</source>
+            <translation>लक्षित गेम</translation>
+        </message>
+        <message>
+            <location filename="../ui/add_project_page.ui" line="137" />
+            <source>原文フォルダ</source>
+            <translation>स्रोत पाठ फ़ोल्डर</translation>
+        </message>
+        <message>
+            <location filename="../ui/add_project_page.ui" line="146" />
+            <source>D:/Mods/ProjectNew/source_lang</source>
+            <translation>D:/Mods/ProjectNew/source_lang</translation>
+        </message>
+        <message>
+            <location filename="../ui/add_project_page.ui" line="153" />
+            <source>参照...</source>
+            <translation>ब्राउज़...</translation>
+        </message>
+    </context>
+    <context>
+        <name>Language</name>
+        <message>
+            <location filename="../core/settings_window.py" line="75" />
+            <source>Language Name</source>
+            <translation>हिन्दी</translation>
+        </message>
+    </context>
+    <context>
+        <name>MainWindow</name>
+        <message>
+            <location filename="../ui/paratranz_mod_checker.ui" line="14" />
+            <source>Paratranz MOD Update Checker</source>
+            <translation>Paratranz MOD Update Checker</translation>
+        </message>
+        <message>
+            <location filename="../ui/paratranz_mod_checker.ui" line="35" />
+            <source>ロゴ</source>
+            <translation>लोगो</translation>
+        </message>
+        <message>
+            <location filename="../ui/paratranz_mod_checker.ui" line="57" />
+            <location filename="../ui/paratranz_mod_checker.ui" line="101" />
+            <source>プロジェクト管理</source>
+            <translation>प्रोजेक्ट प्रबंधन</translation>
+        </message>
+        <message>
+            <location filename="../ui/paratranz_mod_checker.ui" line="62" />
+            <location filename="../ui/paratranz_mod_checker.ui" line="439" />
+            <source>プロジェクト更新</source>
+            <translation>प्रोजेक्ट अपडेट</translation>
+        </message>
+        <message>
+            <location filename="../ui/paratranz_mod_checker.ui" line="67" />
+            <source>プロジェクト追加</source>
+            <translation>प्रोजेक्ट जोड़ें</translation>
+        </message>
+        <message>
+            <location filename="../ui/paratranz_mod_checker.ui" line="72" />
+            <source>設定</source>
+            <translation>सेटिंग्स</translation>
+        </message>
+        <message>
+            <location filename="../ui/paratranz_mod_checker.ui" line="108" />
+            <source>登録済みのParatranzプロジェクトの確認を行います</source>
+            <translation>पंजीकृत Paratranz प्रोजेक्ट्स की जाँच करें</translation>
+        </message>
+        <message>
+            <location filename="../ui/paratranz_mod_checker.ui" line="117" />
+            <location filename="../ui/paratranz_mod_checker.ui" line="513" />
+            <source>ゲーム</source>
+            <translation>गेम</translation>
+        </message>
+        <message>
+            <location filename="../ui/paratranz_mod_checker.ui" line="172" />
+            <source>すべて</source>
+            <translation>सभी</translation>
+        </message>
+        <message>
+            <location filename="../ui/paratranz_mod_checker.ui" line="252" />
+            <location filename="../ui/paratranz_mod_checker.ui" line="307" />
+            <source>プロジェクト名</source>
+            <translation>प्रोजेक्ट नाम</translation>
+        </message>
+        <message>
+            <location filename="../ui/paratranz_mod_checker.ui" line="259" />
+            <source>Paratranzで開く</source>
+            <translation>Paratranz में खोलें</translation>
+        </message>
+        <message>
+            <location filename="../ui/paratranz_mod_checker.ui" line="262" />
+            <source>ParaTranzへリンク</source>
+            <translation>ParaTranz लिंक</translation>
+        </message>
+        <message>
+            <location filename="../ui/paratranz_mod_checker.ui" line="269" />
+            <source>✕</source>
+            <translation>✕</translation>
+        </message>
+        <message>
+            <location filename="../ui/paratranz_mod_checker.ui" line="278" />
+            <source>Paratranz連携</source>
+            <translation>Paratranz एकीकरण</translation>
+        </message>
+        <message>
+            <location filename="../ui/paratranz_mod_checker.ui" line="286" />
+            <source>プロジェクトID</source>
+            <translation>प्रोजेक्ट ID</translation>
+        </message>
+        <message>
+            <location filename="../ui/paratranz_mod_checker.ui" line="298" />
+            <source>例: 12345</source>
+            <translation>उदाहरण: 12345</translation>
+        </message>
+        <message>
+            <location filename="../ui/paratranz_mod_checker.ui" line="317" />
+            <source>自動で取得されます</source>
+            <translation>स्वचालित रूप से प्राप्त किया जाएगा</translation>
+        </message>
+        <message>
+            <location filename="../ui/paratranz_mod_checker.ui" line="324" />
+            <source>権限</source>
+            <translation>अनुमति</translation>
+        </message>
+        <message>
+            <location filename="../ui/paratranz_mod_checker.ui" line="331" />
+            <source>TextLabel</source>
+            <translation>TextLabel</translation>
+        </message>
+        <message>
+            <location filename="../ui/paratranz_mod_checker.ui" line="340" />
+            <location filename="../ui/paratranz_mod_checker.ui" line="503" />
+            <source>アイコン</source>
+            <translation>आइकन</translation>
+        </message>
+        <message>
+            <location filename="../ui/paratranz_mod_checker.ui" line="350" />
+            <source>ローカル設定</source>
+            <translation>स्थानीय सेटिंग्स</translation>
+        </message>
+        <message>
+            <location filename="../ui/paratranz_mod_checker.ui" line="356" />
+            <source>対象ゲーム</source>
+            <translation>लक्षित गेम</translation>
+        </message>
+        <message>
+            <location filename="../ui/paratranz_mod_checker.ui" line="370" />
+            <source>原文フォルダ</source>
+            <translation>स्रोत पाठ फ़ोल्डर</translation>
+        </message>
+        <message>
+            <location filename="../ui/paratranz_mod_checker.ui" line="379" />
+            <source>D:/Mods/ProjectNew/source_lang</source>
+            <translation>D:/Mods/ProjectNew/source_lang</translation>
+        </message>
+        <message>
+            <location filename="../ui/paratranz_mod_checker.ui" line="386" />
+            <source>参照...</source>
+            <translation>ब्राउज़...</translation>
+        </message>
+        <message>
+            <location filename="../ui/paratranz_mod_checker.ui" line="417" />
+            <source>プロジェクトを登録解除</source>
+            <translation>प्रोजेक्ट पंजीकरण हटाएँ</translation>
+        </message>
+        <message>
+            <location filename="../ui/paratranz_mod_checker.ui" line="446" />
+            <source>Paratranzとローカルファイルの差分を確認・適用します</source>
+            <translation>Paratranz और स्थानीय फ़ाइलों के अंतर की जाँच और लागू करें</translation>
+        </message>
+        <message>
+            <location filename="../ui/paratranz_mod_checker.ui" line="468" />
+            <source>すべてチェック</source>
+            <translation>सभी जाँचें</translation>
+        </message>
+        <message>
+            <location filename="../ui/paratranz_mod_checker.ui" line="475" />
+            <source>すべて反映</source>
+            <translation>सभी लागू करें</translation>
+        </message>
+        <message>
+            <location filename="../ui/paratranz_mod_checker.ui" line="508" />
+            <source>名前</source>
+            <translation>नाम</translation>
+        </message>
+        <message>
+            <location filename="../ui/paratranz_mod_checker.ui" line="518" />
+            <source>更新</source>
+            <translation>अपडेट</translation>
+        </message>
+    </context>
+    <context>
+        <name>SettingsDialog</name>
+        <message>
+            <location filename="../core/settings_window.py" line="65" />
+            <source>System Default</source>
+            <translation>सिस्टम डिफ़ॉल्ट</translation>
+        </message>
+        <message>
+            <location filename="../core/settings_window.py" line="164" />
+            <source>言語設定の変更</source>
+            <translation>भाषा सेटिंग बदलें</translation>
+        </message>
+        <message>
+            <location filename="../core/settings_window.py" line="165" />
+            <source>言語設定を反映するにはアプリの再起動が必要です。</source>
+            <translation>भाषा सेटिंग लागू करने के लिए ऐप को पुनः प्रारंभ करना आवश्यक है।</translation>
+        </message>
+    </context>
+    <context>
+        <name>SettingsPage</name>
+        <message>
+            <location filename="../ui/settingsPage.ui" line="14" />
+            <source>Form</source>
+            <translation>Form</translation>
+        </message>
+        <message>
+            <location filename="../ui/settingsPage.ui" line="20" />
+            <location filename="../ui/settingsPage.ui" line="26" />
+            <source>言語</source>
+            <translation>भाषा</translation>
+        </message>
+        <message>
+            <location filename="../ui/settingsPage.ui" line="39" />
+            <source>ParaTranz API</source>
+            <translation>ParaTranz API</translation>
+        </message>
+        <message>
+            <location filename="../ui/settingsPage.ui" line="45" />
+            <source>API URL</source>
+            <translation>API URL</translation>
+        </message>
+        <message>
+            <location filename="../ui/settingsPage.ui" line="52" />
+            <source>https://paratranz.cn/api</source>
+            <translation>https://paratranz.cn/api</translation>
+        </message>
+        <message>
+            <location filename="../ui/settingsPage.ui" line="62" />
+            <source>API Token</source>
+            <translation>API टोकन</translation>
+        </message>
+        <message>
+            <location filename="../ui/settingsPage.ui" line="72" />
+            <source>ParatranzのPersonal Access Tokenを入力</source>
+            <translation>Paratranz का Personal Access Token दर्ज करें</translation>
+        </message>
+        <message>
+            <location filename="../ui/settingsPage.ui" line="87" />
+            <source>接続テスト</source>
+            <translation>कनेक्शन परीक्षण</translation>
+        </message>
+        <message>
+            <location filename="../ui/settingsPage.ui" line="94" />
+            <source>状態: 未接続</source>
+            <translation>स्थिति: कनेक्ट नहीं</translation>
+        </message>
+        <message>
+            <location filename="../ui/settingsPage.ui" line="125" />
+            <source>常駐・監視設定</source>
+            <translation>बैकग्राउंड/निगरानी सेटिंग्स</translation>
+        </message>
+        <message>
+            <location filename="../ui/settingsPage.ui" line="131" />
+            <source>バックグラウンドで定期的に監視する</source>
+            <translation>बैकग्राउंड में नियमित रूप से निगरानी करें</translation>
+        </message>
+        <message>
+            <location filename="../ui/settingsPage.ui" line="140" />
+            <source>監視間隔</source>
+            <translation>निगरानी अंतराल</translation>
+        </message>
+        <message>
+            <location filename="../ui/settingsPage.ui" line="167" />
+            <source>秒</source>
+            <translation>सेकंड</translation>
+        </message>
+        <message>
+            <location filename="../ui/settingsPage.ui" line="172" />
+            <source>分</source>
+            <translation>मिनट</translation>
+        </message>
+        <message>
+            <location filename="../ui/settingsPage.ui" line="177" />
+            <source>時間</source>
+            <translation>घंटे</translation>
+        </message>
+        <message>
+            <location filename="../ui/settingsPage.ui" line="182" />
+            <source>日</source>
+            <translation>दिन</translation>
+        </message>
+        <message>
+            <location filename="../ui/settingsPage.ui" line="187" />
+            <source>週間</source>
+            <translation>सप्ताह</translation>
+        </message>
+        <message>
+            <location filename="../ui/settingsPage.ui" line="192" />
+            <source>月</source>
+            <translation>महीना</translation>
+        </message>
+        <message>
+            <location filename="../ui/settingsPage.ui" line="197" />
+            <source>年</source>
+            <translation>वर्ष</translation>
+        </message>
+        <message>
+            <location filename="../ui/settingsPage.ui" line="207" />
+            <source>閉じるボタンでシステムトレイに最小化する</source>
+            <translation>बंद बटन से सिस्टम ट्रे में न्यूनतम करें</translation>
+        </message>
+    </context>
+</TS>
