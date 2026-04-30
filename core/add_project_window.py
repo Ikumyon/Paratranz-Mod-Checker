@@ -64,6 +64,13 @@ class AddProjectDialog(QObject):
             self.line_edit_game.textChanged.connect(self.update_icon)
         self.btn_fetch_info.clicked.connect(self.fetch_project_info)
         self.line_edit_project_url.textChanged.connect(self.on_url_changed)
+        # 原文パスが変更されたらボタンの有効状態を更新
+        if self.line_edit_source_path:
+            self.line_edit_source_path.textChanged.connect(self.update_add_button_state)
+        # プロジェクト名が変わった場合も（手動編集に備えて）チェック
+        if self.line_edit_project_name:
+            self.line_edit_project_name.textChanged.connect(self.update_add_button_state)
+            
         self.btn_add_project.clicked.connect(self.handle_accepted)
 
     def on_url_changed(self, text):
@@ -164,8 +171,8 @@ class AddProjectDialog(QObject):
                 # 権限情報の取得
                 self.update_permission_status(project_id, headers)
                 
-                # 登録ボタンを有効化
-                self.btn_add_project.setEnabled(True)
+                # 入力状況に応じて登録ボタンの有効状態を更新
+                self.update_add_button_state()
 
                 # アイコンの更新（ロゴURLがある場合）
                 logo_url = project.get("logo")
@@ -276,11 +283,33 @@ class AddProjectDialog(QObject):
             "source_path": self.line_edit_source_path.text()
         }
 
+    def update_add_button_state(self):
+        """入力状況に応じて「プロジェクトを追加」ボタンの有効状態を切り替える"""
+        data = self.get_data()
+        # ID, 名前, 原文パスがすべて入力されている場合のみ有効化
+        is_valid = bool(
+            data["project_id"].strip() and 
+            data["project_name"].strip() and 
+            data["source_path"].strip()
+        )
+        self.btn_add_project.setEnabled(is_valid)
+
     def handle_accepted(self):
         """確定処理（プロジェクトを追加）"""
         data = self.get_data()
-        if not data["project_id"] or not data["project_name"]:
-            QMessageBox.warning(self.window, "エラー", "プロジェクトIDと名前は必須です。情報取得を行ってください。")
+        
+        # 必須項目のチェック（念のため実行時にも行う）
+        missing = []
+        if not data["project_id"].strip():
+            missing.append("プロジェクトID")
+        if not data["project_name"].strip():
+            missing.append("プロジェクト名")
+        if not data["source_path"].strip():
+            missing.append("原文フォルダ（パス）")
+            
+        if missing:
+            msg = "以下の項目を入力してください：\n・" + "\n・".join(missing)
+            QMessageBox.warning(self.window, "入力エラー", msg)
             return
         
         # 追加中の表示

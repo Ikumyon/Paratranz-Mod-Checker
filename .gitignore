@@ -9,8 +9,8 @@ venv/
 env/
 
 # Project specific data and logs
-data/
-*.json
+data/*
+!data/games.json
 *.log
 
 # IDE settings
