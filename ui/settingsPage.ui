@@ -212,6 +212,56 @@
     </widget>
    </item>
    <item>
+    <widget class="QGroupBox" name="gbAppUpdate">
+     <property name="title">
+      <string>アプリケーションの更新</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_update">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_version">
+        <item>
+         <widget class="QLabel" name="lblAppVersion">
+          <property name="text">
+           <string>現在のバージョン: 0.1.0</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacerVersion">
+          <property name="orientation">
+           <enum>Qt::Orientation::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btnCheckAppUpdate">
+          <property name="text">
+           <string>アップデートを確認</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QLabel" name="lblUpdateStatus">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Orientation::Vertical</enum>

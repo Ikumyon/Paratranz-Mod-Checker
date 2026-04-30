@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Any, Optional
 
 import shiboken6
-from PySide6.QtCore import QFile, QObject, QEvent, QSize, Qt, QTimer, QUrl, QTranslator
+from PySide6.QtCore import QFile, QObject, QEvent, QSize, Qt, QTimer, QUrl, QTranslator, QThreadPool
 from PySide6.QtGui import QDesktopServices, QIcon, QPixmap
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtWidgets import (
@@ -36,10 +36,13 @@ from core.game_manager import GameManager
 from core.project_manager import ProjectManager
 from core.settings_window import SettingsDialog
 from core.sync_manager import SyncManager
+from core.constants import APP_NAME, APP_VERSION
+from core.update_manager import UpdateManager
+from core.worker import Worker
+import threading
 
 
 BASE_DIR = Path(__file__).parent
-APP_NAME = "Paratranz Mod Checker"
 DEFAULT_API_BASE_URL = "https://paratranz.cn"
 
 
@@ -112,6 +115,11 @@ class MainWindow(QObject):
         self.current_side_project_id: Optional[str] = None
         self.last_nav_index = 0
         self.nav_widgets: dict[int, NavWidgetItem] = {}
+        self.project_cards: dict[str, QWidget] = {}
+        self.project_rows: dict[str, int] = {}
+        self.active_workers = set()
+        self.threadpool = QThreadPool()
+        print(f"[{datetime.now().strftime('%H:%M:%S')}] ThreadPool max thread count: {self.threadpool.maxThreadCount()}")
 
         self._apply_style()
         self._apply_logo()
@@ -129,6 +137,9 @@ class MainWindow(QObject):
         self.setup_tray_icon()
         self.load_projects()
         self._select_initial_page()
+        
+        # 起動時にアップデートを確認
+        QTimer.singleShot(2000, self.check_app_update)
 
     # ------------------------------------------------------------------
     # 初期化
@@ -267,6 +278,8 @@ class MainWindow(QObject):
         self.side_lbl_icon = root.findChild(QLabel, "lblIcon")
         self.side_edit_game = root.findChild(QLineEdit, "lineEditGame")
         self.side_edit_source = root.findChild(QLineEdit, "lineEditSourcePath")
+        self.side_edit_include = root.findChild(QLineEdit, "lineEditInclude")
+        self.side_edit_exclude = root.findChild(QLineEdit, "lineEditExclude")
         self.side_btn_browse_source = root.findChild(QPushButton, "btnBrowseSource")
 
         self._set_tool_icon(self.btn_side_close, "close-fill.svg", QSize(20, 20))
@@ -293,6 +306,10 @@ class MainWindow(QObject):
             self.side_btn_browse_source.clicked.connect(self.browse_source_side)
         if self.side_edit_source:
             self.side_edit_source.editingFinished.connect(self.save_side_panel_data)
+        if self.side_edit_include:
+            self.side_edit_include.editingFinished.connect(self.save_side_panel_data)
+        if self.side_edit_exclude:
+            self.side_edit_exclude.editingFinished.connect(self.save_side_panel_data)
 
     def _select_initial_page(self):
         if self.list_widget:
@@ -453,6 +470,30 @@ class MainWindow(QObject):
         # 翻訳の再適用
         apply_translation(QApplication.instance())
 
+    def check_app_update(self):
+        """バックグラウンドでアップデートを確認する。"""
+        def _task():
+            update_info = UpdateManager.check_for_update(APP_VERSION)
+            if update_info:
+                # メインスレッドでUIを更新
+                QTimer.singleShot(0, lambda: self.show_update_badge(True))
+        
+        thread = threading.Thread(target=_task, daemon=True)
+        thread.start()
+
+    def show_update_badge(self, visible: bool):
+        """設定メニューにアップデート通知バッジを表示する。"""
+        # インデックス 3 が「設定」
+        nav_widget = self.nav_widgets.get(3)
+        if nav_widget:
+            # バッジに「!」などを表示
+            if visible:
+                nav_widget.label_badge.setText("!")
+                nav_widget.label_badge.show()
+                nav_widget.label_badge.setToolTip("新しいバージョンがあります")
+            else:
+                nav_widget.label_badge.hide()
+
     # ------------------------------------------------------------------
     # プロジェクト一覧・同期一覧
     # ------------------------------------------------------------------
@@ -462,25 +503,46 @@ class MainWindow(QObject):
             print(f"\n[{datetime.now().strftime('%H:%M:%S')}] すべてをチェック中...")
 
         self._clear_project_views()
+        self.project_cards.clear()
+        self.project_rows.clear()
 
         projects = ProjectManager.load_projects()
         self.update_game_filters(projects)
 
-        update_count = 0
+        # 1. まず全カードを表示（「チェック中」などの状態）
         for project in projects:
-            check_res = self._check_project_sync(project, auto_initialize)
-
-            if SyncManager.has_changes(check_res):
-                self.add_project_row(project)
-                update_count += 1
-
             if self._project_matches_filter(project):
                 self.add_project_card(project)
-
+        
         if self.layout_project_cards:
             self.layout_project_cards.addStretch()
 
-        self.update_sidebar_badge(update_count)
+        # 2. バックグラウンドで各プロジェクトの同期状態を確認
+        for project in projects:
+            project_id = str(project.get("project_id"))
+            worker = Worker(self._check_project_sync, project, auto_initialize)
+            worker.signals.result.connect(lambda res, p=project: self.on_project_check_finished(p, res))
+            worker.signals.finished.connect(lambda w=worker: self.active_workers.discard(w))
+            self.active_workers.add(worker)
+            self.threadpool.start(worker)
+
+    def on_project_check_finished(self, project: dict, check_res: dict):
+        """プロジェクトの同期チェックが終わった時の処理。"""
+        project_id = str(project.get("project_id"))
+        
+        # 変更がある場合は同期テーブルに追加
+        if SyncManager.has_changes(check_res):
+            self.add_project_row(project)
+        
+        # サイドバーのバッジを更新（同期が必要なプロジェクト数を数え直す）
+        self.update_total_sync_badge()
+
+    def update_total_sync_badge(self):
+        """同期が必要なプロジェクトの総数をカウントしてバッジを更新。"""
+        if not self.table_sync:
+            return
+        count = self.table_sync.rowCount()
+        self.update_sidebar_badge(count)
 
     def _clear_project_views(self):
         if self.table_sync:
@@ -538,6 +600,10 @@ class MainWindow(QObject):
         btn.clicked.connect(lambda: self.on_sync_clicked(project))
         self.table_sync.setCellWidget(row, 3, btn_container)
         self.table_sync.setRowHeight(row, 40)
+        
+        # 行インデックスを記録（プロジェクト削除時の同期などに利用可能）
+        project_id = str(project.get("project_id"))
+        self.project_rows[project_id] = row
 
     def add_project_card(self, project: dict):
         if not self.layout_project_cards:
@@ -579,6 +645,10 @@ class MainWindow(QObject):
         layout_main.addLayout(layout_info)
         layout_main.addWidget(icon_label)
         self.layout_project_cards.addWidget(card)
+        
+        # カードへの参照を保持
+        project_id = str(project.get("project_id"))
+        self.project_cards[project_id] = card
 
     def _create_card_bottom_row(self, project: dict) -> QHBoxLayout:
         row = QHBoxLayout()
@@ -852,7 +922,17 @@ class MainWindow(QObject):
         project_name = project.get("project_name")
         print(f"\n[{datetime.now().strftime('%H:%M:%S')}] {project_name} を同期中...")
 
-        success, message = SyncManager.execute_sync(project, check_res)
+        worker = Worker(SyncManager.execute_sync, project, check_res)
+        worker.signals.result.connect(lambda res, p=project: self.on_sync_finished(p, res))
+        worker.signals.error.connect(lambda err: QMessageBox.critical(self.window, "同期エラー", f"エラーが発生しました: {err}"))
+        worker.signals.finished.connect(lambda w=worker: self.active_workers.discard(w))
+        self.active_workers.add(worker)
+        self.threadpool.start(worker)
+
+    def on_sync_finished(self, project: dict, result: tuple):
+        success, message = result
+        project_name = project.get("project_name")
+        
         if success:
             self._touch_project_updated_at(project)
             QMessageBox.information(self.window, "同期完了", f"「{project_name}」の同期が完了しました。\n{message}")
@@ -862,31 +942,38 @@ class MainWindow(QObject):
         self.load_projects()
 
     def on_push_all_clicked(self):
-        projects = ProjectManager.load_projects()
-        changed_projects = []
-        totals = {"new": 0, "modified": 0, "deleted": 0}
+        print(f"\n[{datetime.now().strftime('%H:%M:%S')}] すべてを反映するための準備を開始...")
+        
+        def _check_all_task():
+            projects = ProjectManager.load_projects()
+            changed_projects = []
+            totals = {"new": 0, "modified": 0, "deleted": 0}
+            for project in projects:
+                check_res = SyncManager.check_sync(project)
+                if SyncManager.has_changes(check_res):
+                    changed_projects.append((project, check_res))
+                    results = check_res.get("results", {})
+                    totals["new"] += len(results.get("new", []))
+                    totals["modified"] += len(results.get("modified", []))
+                    totals["deleted"] += len(results.get("deleted", []))
+            return changed_projects, totals
 
-        print(f"\n[{datetime.now().strftime('%H:%M:%S')}] すべてを反映するための差分を確認中...")
+        worker = Worker(_check_all_task)
+        worker.signals.result.connect(self.on_push_all_check_finished)
+        worker.signals.finished.connect(lambda w=worker: self.active_workers.discard(w))
+        self.active_workers.add(worker)
+        self.threadpool.start(worker)
 
-        for project in projects:
-            check_res = SyncManager.check_sync(project)
-            if not SyncManager.has_changes(check_res):
-                continue
-
-            changed_projects.append((project, check_res))
-            results = check_res.get("results", {})
-            totals["new"] += len(results.get("new", []))
-            totals["modified"] += len(results.get("modified", []))
-            totals["deleted"] += len(results.get("deleted", []))
-
+    def on_push_all_check_finished(self, result: tuple):
+        changed_projects, totals = result
         if not changed_projects:
             QMessageBox.information(self.window, "通知", "反映が必要な変更はありません。")
             return
 
-        if self._confirm_push_all(len(changed_projects), totals):
-            self._execute_push_all(changed_projects)
+        if self._show_push_all_dialog(len(changed_projects), totals):
+            self._execute_push_all_async(changed_projects)
 
-    def _confirm_push_all(self, project_count: int, totals: dict[str, int]) -> bool:
+    def _show_push_all_dialog(self, project_count: int, totals: dict[str, int]) -> bool:
         message = "以下の変更をすべてのプロジェクトに反映しますか？\n\n"
         message += f"対象プロジェクト: {project_count} 件\n"
         if totals["new"] > 0:
@@ -905,24 +992,28 @@ class MainWindow(QObject):
         )
         return reply == QMessageBox.Yes
 
-    def _execute_push_all(self, changed_projects: list[tuple[dict, dict]]):
-        print(f"[{datetime.now().strftime('%H:%M:%S')}] 一括反映を開始します...")
+    def _execute_push_all_async(self, changed_projects: list[tuple[dict, dict]]):
+        print(f"[{datetime.now().strftime('%H:%M:%S')}] 一括反映をバックグラウンドで開始します...")
 
-        for project, check_res in changed_projects:
-            project_name = project.get("project_name", "Unknown")
-            print(f"  - {project_name} を同期中...", end="", flush=True)
-            success, message = SyncManager.execute_sync(project, check_res)
-            if success:
-                self._touch_project_updated_at(project)
-                print(f" -> 完了 ({message})")
-            else:
-                print(f" -> 一部失敗 ({message})")
+        def _task():
+            total_count = len(changed_projects)
+            success_count = 0
+            for project, check_res in changed_projects:
+                success, _ = SyncManager.execute_sync(project, check_res)
+                if success:
+                    self._touch_project_updated_at(project)
+                    success_count += 1
+            return success_count, total_count
 
-        QMessageBox.information(
-            self.window,
-            "一括反映完了",
-            "すべてのプロジェクトの同期処理が終了しました。詳細はコンソールを確認してください。",
-        )
+        worker = Worker(_task)
+        worker.signals.result.connect(self.on_push_all_finished)
+        worker.signals.finished.connect(lambda w=worker: self.active_workers.discard(w))
+        self.active_workers.add(worker)
+        self.threadpool.start(worker)
+
+    def on_push_all_finished(self, result: tuple):
+        success_count, total_count = result
+        QMessageBox.information(self.window, "一括反映完了", f"一括反映が完了しました。\n成功: {success_count} / {total_count} プロジェクト")
         self.load_projects()
 
     @staticmethod
@@ -1031,6 +1122,10 @@ class MainWindow(QObject):
             self.side_edit_game.setText(GameManager.get_game_display_name(project.get("game", "")))
         if self.side_edit_source:
             self.side_edit_source.setText(project.get("source_path", ""))
+        if self.side_edit_include:
+            self.side_edit_include.setText(project.get("include_pattern", "*"))
+        if self.side_edit_exclude:
+            self.side_edit_exclude.setText(project.get("exclude_pattern", ""))
 
     def hide_side_panel(self):
         if self.frame_side_panel:
@@ -1068,7 +1163,12 @@ class MainWindow(QObject):
         projects = ProjectManager.load_projects()
         for project in projects:
             if project.get("project_id") == self.current_side_project_id:
-                project["source_path"] = self.side_edit_source.text()
+                if self.side_edit_source:
+                    project["source_path"] = self.side_edit_source.text()
+                if self.side_edit_include:
+                    project["include_pattern"] = self.side_edit_include.text()
+                if self.side_edit_exclude:
+                    project["exclude_pattern"] = self.side_edit_exclude.text()
                 break
 
         ProjectManager.save_projects(projects)

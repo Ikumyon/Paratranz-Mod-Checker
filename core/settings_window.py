@@ -5,6 +5,8 @@ from PySide6.QtWidgets import QMessageBox
 import requests
 import sys
 from core.config_manager import ConfigManager
+from core.update_manager import UpdateManager
+from core.constants import APP_VERSION
 
 class SettingsDialog(QObject):
     saved = Signal()
@@ -32,6 +34,14 @@ class SettingsDialog(QObject):
         self.cb_localization = self.window.findChild(object, "cbLocalization")
         self.chk_minimize_to_tray = self.window.findChild(object, "chkMinimizeToTray")
         
+        # アプリ更新設定
+        self.lbl_app_version = self.window.findChild(object, "lblAppVersion")
+        self.btn_check_app_update = self.window.findChild(object, "btnCheckAppUpdate")
+        self.lbl_update_status = self.window.findChild(object, "lblUpdateStatus")
+        
+        if self.lbl_app_version:
+            self.lbl_app_version.setText(f"現在のバージョン: {APP_VERSION}")
+        
         # 言語リストの初期化
         self.populate_languages()
         
@@ -57,6 +67,8 @@ class SettingsDialog(QObject):
             self.chk_minimize_to_tray.toggled.connect(self.save_settings)
         if self.cb_localization:
             self.cb_localization.currentIndexChanged.connect(self.save_settings)
+        if self.btn_check_app_update:
+            self.btn_check_app_update.clicked.connect(self.check_app_update)
 
     def populate_languages(self):
         if not self.cb_localization:
@@ -168,3 +180,40 @@ class SettingsDialog(QObject):
         # 即時保存なので、saved.emit() は基本不要だが、
         # 他の画面で設定変更を検知したい場合のために残すことも可能。
         # ここでは遷移はさせないので emit しない。
+
+    def check_app_update(self):
+        """最新バージョンがあるかチェックする。"""
+        if not self.btn_check_app_update:
+            return
+
+        self.btn_check_app_update.setEnabled(False)
+        self.btn_check_app_update.setText("確認中...")
+        if self.lbl_update_status:
+            self.lbl_update_status.setText("")
+        self.window.repaint()
+
+        update_info = UpdateManager.check_for_update(APP_VERSION)
+
+        if update_info:
+            msg = f"新しいバージョン ({update_info['version']}) が見つかりました。"
+            if self.lbl_update_status:
+                self.lbl_update_status.setText(msg)
+                self.lbl_update_status.setStyleSheet("color: #4CAF50; font-weight: bold;")
+            
+            reply = QMessageBox.question(
+                self.window,
+                "アップデートあり",
+                f"{msg}\n\n更新内容:\n{update_info.get('body', 'なし')}\n\nダウンロードページを開きますか？",
+                QMessageBox.Yes | QMessageBox.No
+            )
+            if reply == QMessageBox.Yes:
+                import webbrowser
+                webbrowser.open(update_info["url"])
+        else:
+            if self.lbl_update_status:
+                self.lbl_update_status.setText("最新のバージョンを使用しています。")
+                self.lbl_update_status.setStyleSheet("color: gray;")
+            QMessageBox.information(self.window, "アップデートチェック", "最新のバージョンを使用しています。")
+
+        self.btn_check_app_update.setText("アップデートを確認")
+        self.btn_check_app_update.setEnabled(True)

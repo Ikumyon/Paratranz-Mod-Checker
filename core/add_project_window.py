@@ -30,6 +30,8 @@ class AddProjectDialog(QObject):
         self.line_edit_project_name = self.window.findChild(object, "lineEditProjectName")
         self.line_edit_game = self.window.findChild(object, "lineEditGame")
         self.line_edit_source_path = self.window.findChild(object, "lineEditSourcePath")
+        self.line_edit_include = self.window.findChild(object, "lineEditInclude")
+        self.line_edit_exclude = self.window.findChild(object, "lineEditExclude")
         
         self._project_desc = "" # 説明文の保持用
         self._updated_at = "" # 更新日時の保持用
@@ -280,7 +282,9 @@ class AddProjectDialog(QObject):
             "description": self._project_desc,
             "updated_at": self._updated_at,
             "game": self._current_game_id, # IDを返す
-            "source_path": self.line_edit_source_path.text()
+            "source_path": self.line_edit_source_path.text(),
+            "include_pattern": self.line_edit_include.text() if self.line_edit_include else "*",
+            "exclude_pattern": self.line_edit_exclude.text() if self.line_edit_exclude else ""
         }
 
     def update_add_button_state(self):
@@ -344,6 +348,8 @@ class AddProjectDialog(QObject):
         self.line_edit_project_name.clear()
         self.line_edit_game.clear()
         self.line_edit_source_path.clear()
+        if self.line_edit_include: self.line_edit_include.clear()
+        if self.line_edit_exclude: self.line_edit_exclude.clear()
         self._current_game_id = ""
         if self.lbl_permission:
             self.lbl_permission.setText("未取得")

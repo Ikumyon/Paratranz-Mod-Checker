@@ -6,6 +6,7 @@ import io
 from pathlib import Path
 from datetime import datetime
 import sys
+import fnmatch
 from core.config_manager import ConfigManager
 
 class SyncManager:
@@ -69,7 +70,15 @@ class SyncManager:
         # 1. Paratranzのファイル一覧を取得
         files_url = f"{api_url.rstrip('/')}/projects/{project_id}/files"
         files_res = requests.get(files_url, headers=headers, timeout=10)
+        res_json = files_res.json() if files_res.status_code == 200 else {"error": files_res.text}
         
+        # ファイル一覧は膨大になる可能性があるため、件数のみ記録
+        cls._log_api("get_files", project_id, files_res.status_code, {
+            "url": files_url,
+            "file_count": len(res_json) if isinstance(res_json, list) else len(res_json.get("results", [])),
+            "message": "File list fetched successfully" if files_res.status_code == 200 else "Failed to fetch files"
+        })
+
         if files_res.status_code != 200:
             raise Exception(f"ファイル一覧の取得に失敗しました (Status: {files_res.status_code})")
         
@@ -87,24 +96,43 @@ class SyncManager:
 
         # 2. Artifactの生成リクエスト (POST /projects/{id}/artifacts)
         build_url = f"{api_url.rstrip('/')}/projects/{project_id}/artifacts"
-        requests.post(build_url, headers=headers, timeout=30)
+        build_res = requests.post(build_url, headers=headers, timeout=30)
+        cls._log_api("build_artifact", project_id, build_res.status_code, {
+            "url": build_url,
+            "message": "Artifact build requested"
+        })
 
         # 3. Artifactのダウンロード (GET /projects/{id}/artifacts/download)
         download_url = f"{api_url.rstrip('/')}/projects/{project_id}/artifacts/download"
         response = requests.get(download_url, headers=headers, timeout=60)
-        
+        cls._log_api("download_artifact", project_id, response.status_code, {
+            "url": download_url,
+            "message": f"Download status: {response.status_code}"
+        })
+
         if response.status_code != 200:
             raise Exception(f"Artifactのダウンロードに失敗しました (Status: {response.status_code})")
 
         # 4. ZIPを展開してハッシュ計算
-        remote_files = {f["path"]: f for f in remote_results if "path" in f}
+        remote_files = {}
+        for f in remote_results:
+            # 'name' または 'path' フィールドからパスを取得
+            remote_path = f.get("name") or f.get("path")
+            if remote_path:
+                remote_files[remote_path] = f
 
         with zipfile.ZipFile(io.BytesIO(response.content)) as z:
             for member in z.infolist():
                 if member.is_dir():
                     continue
                 
-                path = member.filename
+                full_path = member.filename
+                # 'utf8/' フォルダ内のファイルのみを対象にする
+                if not full_path.startswith("utf8/"):
+                    continue
+                
+                # 'utf8/' を除いたパスを取得
+                path = full_path[len("utf8/"):]
                 content = z.read(member)
                 file_hash = hashlib.md5(content).hexdigest()
                 
@@ -125,6 +153,8 @@ class SyncManager:
         """同期状態を確認する"""
         project_id = project_data.get("project_id")
         source_path = Path(project_data.get("source_path", ""))
+        include_pattern = project_data.get("include_pattern", "*")
+        exclude_pattern = project_data.get("exclude_pattern", "")
         
         if not source_path or not source_path.exists():
             return {"error": "ソースパスが無効です。"}
@@ -150,6 +180,11 @@ class SyncManager:
             
             # source_pathからの相対パスを取得し、Paratranz形式（スラッシュ）にする
             rel_path = file_path.relative_to(source_path).as_posix()
+            
+            # フィルタリング
+            if not cls._should_include(rel_path, include_pattern, exclude_pattern):
+                continue
+
             current_hash = cls.calculate_hash(file_path)
             local_files[rel_path] = current_hash
 
@@ -171,14 +206,32 @@ class SyncManager:
                 results["synced"].append(rel_path)
 
         # 削除されたファイルの確認（キャッシュにあってローカルにないもの）
+        # ただし、設定されたパターンの範囲外のファイルは無視する
         for cached_path, info in cache["files"].items():
             if cached_path not in local_files:
-                results["deleted"].append({
-                    "path": cached_path,
-                    "remote_file_id": info.get("remote_file_id")
-                })
+                # フィルタリング設定の範囲内にあるファイルのみ削除対象とする
+                if cls._should_include(cached_path, include_pattern, exclude_pattern):
+                    results["deleted"].append({
+                        "path": cached_path,
+                        "remote_file_id": info.get("remote_file_id")
+                    })
 
         return {"status": "READY", "results": results}
+
+    @staticmethod
+    def _should_include(path, include_pat, exclude_pat):
+        """パスがフィルタリング条件に合致するか判定する"""
+        includes = [p.strip() for p in include_pat.split(",") if p.strip()] if include_pat else ["*"]
+        excludes = [p.strip() for p in exclude_pat.split(",") if p.strip()] if exclude_pat else []
+
+        # 包含チェック (いずれかにマッチすればOK)
+        is_included = any(fnmatch.fnmatch(path, p) for p in includes)
+        if not is_included:
+            return False
+
+        # 除外チェック (いずれかにマッチすれば除外)
+        is_excluded = any(fnmatch.fnmatch(path, p) for p in excludes)
+        return not is_excluded
 
     @staticmethod
     def has_changes(check_res):
@@ -233,12 +286,16 @@ class SyncManager:
         else:
             # 新規 (POST /projects/{id}/files)
             url = f"{api_url.rstrip('/')}/projects/{project_id}/files"
-            # 新規の場合はパス情報を追加（Paratranzの仕様による）
-            # データ部が必要な場合がある
-            # data = {"path": rel_path}
-
-        response = requests.post(url, headers=headers, files=files, timeout=30)
-        cls._log_api(f"POST {url}", project_id, response.status_code, response.text)
+        
+        data = {"path": rel_path}
+        response = requests.post(url, headers=headers, files=files, data=data, timeout=30)
+        
+        # 生のレスポンスデータをログに記録
+        cls._log_api("upload_file", project_id, response.status_code, {
+            "url": url,
+            "path": rel_path,
+            "response": response.json() if response.status_code in [200, 201] else response.text
+        })
         
         if response.status_code in [200, 201]:
             # キャッシュを更新
@@ -296,7 +353,9 @@ class SyncManager:
             res_json = res.json()
             results = res_json if isinstance(res_json, list) else res_json.get("results", [])
             for f in results:
-                if f.get("path") == rel_path:
+                # 'name' または 'path' フィールドからパスを取得
+                remote_path = f.get("name") or f.get("path")
+                if remote_path == rel_path:
                     return f.get("id")
         return None
 
@@ -307,12 +366,18 @@ class SyncManager:
         token = ConfigManager.get("api_token")
         
         headers = {"Authorization": token}
-        url = f"{api_url.rstrip('/')}/projects/{project_id}/files/{remote_file_id}"
+        delete_url = f"{api_url.rstrip('/')}/projects/{project_id}/files/{remote_file_id}"
         
-        response = requests.delete(url, headers=headers, timeout=10)
-        cls._log_api(f"DELETE {url}", project_id, response.status_code, response.text)
+        response = requests.delete(delete_url, headers=headers, timeout=10)
         
-        if response.status_code in [200, 204]:
+        # 削除の実行結果を記録
+        cls._log_api("delete_file", project_id, response.status_code, {
+            "url": delete_url,
+            "path": rel_path,
+            "response": response.json() if response.status_code == 200 else response.text
+        })
+        
+        if response.status_code == 200:
             # キャッシュから削除
             cache = cls.get_project_cache(project_id)
             if rel_path in cache["files"]:
