@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paratranz Mod Checker - ローカルとParatranzをボタン一つで同期</title>
+    <meta name="description" content="Paratranz Mod Checkerは、翻訳Mod作成者がローカルの原文変更をParatranzへ即座に同期するための管理ツールです。">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-XXXXXXXXXX');
+    </script>
+</head>
+<body>
+    <header id="navbar">
+        <div class="container nav-container">
+            <div class="logo">
+                <img src="../assets/app_logo.svg" alt="Paratranz Mod Checker Logo" id="nav-logo" onerror="this.src='https://via.placeholder.com/40x40?text=Logo'">
+                <span>Paratranz Mod Checker</span>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#hero">ホーム</a></li>
+                    <li><a href="#features">機能</a></li>
+                    <li><a href="https://github.com/Ikumyon/Paratranz-Mod-Checker/releases/latest/download/Paratranz_Mod_Checker.zip" class="btn-small">ダウンロード</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section id="hero">
+            <div class="container hero-container">
+                <div class="hero-content">
+                    <h1 class="fade-in">翻訳Modの原文更新を、<br><span class="gradient-text">一瞬でParatranzへ。</span></h1>
+                    <p class="fade-in-delay">Paratranz Mod Checkerは、翻訳Mod作成者のための同期管理ツールです。ローカルのModファイルで行った原文の変更を、ボタン一つでParatranz上のデータへダイレクトに反映します。</p>
+                    <div class="hero-btns fade-in-delay">
+                        <a href="https://github.com/Ikumyon/Paratranz-Mod-Checker/releases/latest/download/Paratranz_Mod_Checker.zip" class="btn-primary" id="btn-hero-download">最新版をダウンロード (.zip)</a>
+                        <a href="https://github.com/Ikumyon/Paratranz-Mod-Checker" target="_blank" class="btn-secondary" id="btn-hero-github">GitHubで見る</a>
+                    </div>
+                </div>
+                <div class="hero-image fade-in-right">
+                    <div class="placeholder-img main-visual">
+                        <img src="list.webp" alt="プロジェクト一覧画面">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Core Feature Focus -->
+        <section id="sync-focus" class="section-padding">
+            <div class="container">
+                <div class="focus-grid">
+                    <div class="focus-text">
+                        <h2 class="section-title">ボタン一つで同期</h2>
+                        <p>ゲームのアップデート等に伴う原文の変更を、手動でParatranzに反映させる手間はもう不要です。ボタンをクリックするだけで、ローカルの最新原文をParatranzへ同期し、翻訳作業をすぐに開始できます。</p>
+                    </div>
+                    <div class="focus-visual">
+                        <div class="placeholder-img sync-anim">
+                            <img src="sync_update.webp" alt="同期・更新チェック画面">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" class="section-padding alternate-bg">
+            <div class="container">
+                <h2 class="section-title text-center">主な機能</h2>
+                <div class="features-grid">
+                    <div class="feature-card" id="feature-sync">
+                        <div class="feature-icon">🔄</div>
+                        <h3>ボタン一つで同期</h3>
+                        <p>ローカルで行った原文の変更をボタン一つでParatranz上のファイルと同期。変更箇所のみを賢く検知して反映します。</p>
+                    </div>
+                    <div class="feature-card" id="feature-manage">
+                        <div class="feature-icon">📁</div>
+                        <h3>複数プロジェクト管理</h3>
+                        <p>数多くのModプロジェクトを一つの画面で並行管理。プロジェクトごとのステータスも一目で把握。</p>
+                    </div>
+                    <div class="feature-card" id="feature-monitor">
+                        <div class="feature-icon">🔔</div>
+                        <h3>自動チェック</h3>
+                        <p>バックグラウンドで常に更新を監視。変更があればシステムトレイから即座にお知らせします。</p>
+                    </div>
+                    <div class="feature-card" id="feature-filter">
+                        <div class="feature-icon">🎮</div>
+                        <h3>ゲーム別フィルタ</h3>
+                        <p>ゲームタイトルごとにプロジェクトを整理。大量のModがあっても迷うことはありません。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Manage Projects Section -->
+        <section id="setup-focus" class="section-padding">
+            <div class="container">
+                <div class="focus-grid">
+                    <div class="focus-visual">
+                        <div class="placeholder-img setup-img">
+                            <img src="add.webp" alt="プロジェクト追加画面">
+                        </div>
+                    </div>
+                    <div class="focus-text">
+                        <h2 class="section-title">スムーズなプロジェクト管理</h2>
+                        <p>ParatranzのURLを入力するだけで簡単にプロジェクトを追加可能。複数のゲームModを効率的に整理し、必要なプロジェクトにいつでも素早くアクセスできます。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Download Section -->
+        <section id="download" class="section-padding">
+            <div class="container text-center">
+                <h2 class="section-title">今すぐ始めましょう</h2>
+                <p class="mb-2">Paratranz Mod Checkerは、翻訳Mod作成者のワークフローをよりスマートに、より快適にします。</p>
+                <div class="download-box glass">
+                    <h3>Windows版 (.zip)</h3>
+                    <p class="text-muted">最新のZIPアーカイブを直接ダウンロードします。</p>
+                    <a href="https://github.com/Ikumyon/Paratranz-Mod-Checker/releases/latest/download/Paratranz_Mod_Checker.zip" class="btn-primary btn-large" id="btn-final-download">最新版をダウンロード</a>
+                    <p class="small mt-1">※実行にはPython環境は不要です。</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer id="footer">
+        <div class="container footer-container">
+            <div class="footer-info">
+                <p>&copy; 2026 Ikumyon. Licensed under the MIT License.</p>
+            </div>
+            <div class="footer-links">
+                <a href="https://github.com/Ikumyon/Paratranz-Mod-Checker" target="_blank">GitHub</a>
+                <a href="https://github.com/Ikumyon/Paratranz-Mod-Checker/blob/main/LICENSE" target="_blank">ライセンス</a>
+                <a href="#">お問い合わせ</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
