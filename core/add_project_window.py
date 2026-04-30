@@ -87,6 +87,8 @@ class AddProjectDialog(QObject):
                 "status": status_code,
                 "data": data
             }
+            # 親ディレクトリ（data）がない場合は作成
+            log_path.parent.mkdir(parents=True, exist_ok=True)
             with open(log_path, "a", encoding="utf-8") as f:
                 f.write(json.dumps(log_entry, ensure_ascii=False) + "\n")
         except Exception as e:

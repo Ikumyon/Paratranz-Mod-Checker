@@ -37,6 +37,8 @@ class SyncManager:
     @classmethod
     def save_cache(cls, cache_data):
         try:
+            # 親ディレクトリ（data）がない場合は作成
+            cls.CACHE_FILE.parent.mkdir(parents=True, exist_ok=True)
             with open(cls.CACHE_FILE, "w", encoding="utf-8") as f:
                 json.dump(cache_data, f, indent=4, ensure_ascii=False)
         except Exception as e:
@@ -334,6 +336,8 @@ class SyncManager:
                 "status": status_code,
                 "data": data
             }
+            # 親ディレクトリ（data）がない場合は作成
+            log_path.parent.mkdir(parents=True, exist_ok=True)
             with open(log_path, "a", encoding="utf-8") as f:
                 f.write(json.dumps(log_entry, ensure_ascii=False) + "\n")
         except Exception as e:

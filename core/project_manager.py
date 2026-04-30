@@ -18,6 +18,8 @@ class ProjectManager:
     @classmethod
     def save_projects(cls, projects):
         try:
+            # 親ディレクトリ（data）がない場合は作成
+            cls.PROJECTS_FILE.parent.mkdir(parents=True, exist_ok=True)
             with open(cls.PROJECTS_FILE, "w", encoding="utf-8") as f:
                 json.dump(projects, f, indent=4, ensure_ascii=False)
         except Exception as e:

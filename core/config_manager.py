@@ -21,6 +21,8 @@ class ConfigManager:
             # 既存の設定を読み込んで更新
             config = cls.load_config()
             config.update(data)
+            # 親ディレクトリ（data）がない場合は作成
+            cls.CONFIG_FILE.parent.mkdir(parents=True, exist_ok=True)
             with open(cls.CONFIG_FILE, "w", encoding="utf-8") as f:
                 json.dump(config, f, indent=4, ensure_ascii=False)
         except Exception as e:

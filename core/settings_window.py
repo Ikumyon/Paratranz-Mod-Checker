@@ -132,7 +132,7 @@ class SettingsDialog(QObject):
         if self.cb_interval_unit:
             self.cb_interval_unit.setCurrentIndex(ConfigManager.get("monitor_unit_index", 1)) # デフォルト「分」
         if self.chk_minimize_to_tray:
-            self.chk_minimize_to_tray.setChecked(ConfigManager.get("minimize_to_tray", True))
+            self.chk_minimize_to_tray.setChecked(ConfigManager.get("minimize_to_tray", False))
         
         if self.cb_localization:
             self.cb_localization.blockSignals(True)
@@ -152,7 +152,7 @@ class SettingsDialog(QObject):
             "monitor_enabled": self.chk_enable_monitor.isChecked() if self.chk_enable_monitor else False,
             "monitor_interval": self.spin_interval.value() if self.spin_interval else 30,
             "monitor_unit_index": self.cb_interval_unit.currentIndex() if self.cb_interval_unit else 1,
-            "minimize_to_tray": self.chk_minimize_to_tray.isChecked() if self.chk_minimize_to_tray else True,
+            "minimize_to_tray": self.chk_minimize_to_tray.isChecked() if self.chk_minimize_to_tray else False,
             "language": self.cb_localization.currentData() if self.cb_localization else ""
         }
         ConfigManager.save_config(data)

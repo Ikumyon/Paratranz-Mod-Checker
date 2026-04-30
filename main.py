@@ -369,7 +369,7 @@ class MainWindow(QObject):
         self.tray_icon.setToolTip(APP_NAME)
         self.tray_icon.setContextMenu(self._create_tray_menu())
         self.tray_icon.activated.connect(self.on_tray_icon_activated)
-        self.tray_icon.setVisible(ConfigManager.get("minimize_to_tray", True))
+        self.tray_icon.setVisible(ConfigManager.get("minimize_to_tray", False))
 
     def _create_tray_menu(self) -> QMenu:
         tray_menu = QMenu()
@@ -385,7 +385,7 @@ class MainWindow(QObject):
         return tray_menu
 
     def on_window_close(self, event):
-        if ConfigManager.get("minimize_to_tray", True):
+        if ConfigManager.get("minimize_to_tray", False):
             event.ignore()
             self.window.hide()
             return
