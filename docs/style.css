@@ -441,3 +441,7 @@ nav ul li a:hover {
         justify-content: center;
     }
 }
+
+.autolingua-img {
+    position: relative;
+}
