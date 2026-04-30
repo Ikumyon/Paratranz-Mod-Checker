@@ -50,4 +50,27 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    // Google Analytics Event Tracking for Downloads
+    const downloadButtons = [
+        { id: 'btn-hero-download', label: 'Hero Section' },
+        { id: 'btn-final-download', label: 'Bottom Box' },
+        { selector: '.nav-container .btn-small', label: 'Navbar' }
+    ];
+
+    downloadButtons.forEach(btn => {
+        const element = btn.id ? document.getElementById(btn.id) : document.querySelector(btn.selector);
+        if (element) {
+            element.addEventListener('click', () => {
+                if (typeof gtag === 'function') {
+                    gtag('event', 'app_download', {
+                        'event_category': 'engagement',
+                        'event_label': btn.label,
+                        'file_name': 'Paratranz_Mod_Checker.zip'
+                    });
+                    console.log('GA Event Sent: app_download from ' + btn.label);
+                }
+            });
+        }
+    });
 });
