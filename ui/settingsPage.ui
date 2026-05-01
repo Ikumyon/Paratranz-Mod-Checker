@@ -222,7 +222,7 @@
         <item>
          <widget class="QLabel" name="lblAppVersion">
           <property name="text">
-           <string>現在のバージョン: 0.1.0</string>
+           <string>現在のバージョン: 1.0.1</string>
           </property>
          </widget>
         </item>
