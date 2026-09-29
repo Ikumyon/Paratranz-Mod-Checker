@@ -15,17 +15,9 @@ jobs:
       matrix:
         include:
           - os: windows-latest
-            shell: pwsh
             artifact_name: Paratranz-Mod-Checker-windows.zip
-            build_cmd: |
-              pyinstaller --noconfirm --onedir --windowed --name "Paratranz Mod Checker" --icon="assets\icon.png" --add-data "ui;ui" --add-data "assets;assets" main.py
-              Compress-Archive -Path "dist/Paratranz Mod Checker" -DestinationPath "Paratranz-Mod-Checker-windows.zip"
           - os: ubuntu-latest
-            shell: bash
             artifact_name: Paratranz-Mod-Checker-linux.tar.gz
-            build_cmd: |
-              pyinstaller --noconfirm --onedir --windowed --name "Paratranz Mod Checker" --icon="assets/icon.png" --add-data "ui:ui" --add-data "assets:assets" main.py
-              cd dist && tar -czvf ../Paratranz-Mod-Checker-linux.tar.gz "Paratranz Mod Checker" && cd ..
 
     steps:
       - name: Checkout code
@@ -42,9 +34,19 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Build with PyInstaller
-        shell: ${{ matrix.shell }}
-        run: ${{ matrix.build_cmd }}
+      - name: Build with PyInstaller (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          pyinstaller --noconfirm --onedir --windowed --name "Paratranz Mod Checker" --icon="assets\icon.png" --add-data "ui;ui" --add-data "assets;assets" main.py
+          Compress-Archive -Path "dist/Paratranz Mod Checker" -DestinationPath "Paratranz-Mod-Checker-windows.zip"
+
+      - name: Build with PyInstaller (Linux)
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          pyinstaller --noconfirm --onedir --windowed --name "Paratranz Mod Checker" --icon="assets/icon.png" --add-data "ui:ui" --add-data "assets:assets" main.py
+          cd dist && tar -czvf ../Paratranz-Mod-Checker-linux.tar.gz "Paratranz Mod Checker" && cd ..
 
       - name: Upload to Release
         if: github.event_name == 'release'
