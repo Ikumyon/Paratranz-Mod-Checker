@@ -39,6 +39,7 @@ jobs:
         shell: pwsh
         run: |
           pyinstaller --noconfirm --onedir --windowed --name "Paratranz Mod Checker" --icon="assets\icon.png" --add-data "ui;ui" --add-data "assets;assets" main.py
+          Copy-Item -Recurse localization, data "dist/Paratranz Mod Checker/"
           Compress-Archive -Path "dist/Paratranz Mod Checker" -DestinationPath "Paratranz-Mod-Checker-windows.zip"
 
       - name: Build with PyInstaller (Linux)
@@ -46,6 +47,7 @@ jobs:
         shell: bash
         run: |
           pyinstaller --noconfirm --onedir --windowed --name "Paratranz Mod Checker" --icon="assets/icon.png" --add-data "ui:ui" --add-data "assets:assets" main.py
+          cp -r localization data "dist/Paratranz Mod Checker/"
           cd dist && tar -czvf ../Paratranz-Mod-Checker-linux.tar.gz "Paratranz Mod Checker" && cd ..
 
       - name: Upload to Release
