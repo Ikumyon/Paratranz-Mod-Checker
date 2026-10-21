@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Google Analytics Event Tracking for Downloads
+    // Google Analytics Event Tracking for Distribution Page Links
     const downloadButtons = [
         { id: 'btn-hero-download', label: 'Hero Section' },
         { id: 'btn-final-download', label: 'Bottom Box' },
@@ -63,12 +63,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (element) {
             element.addEventListener('click', () => {
                 if (typeof gtag === 'function') {
-                    gtag('event', 'app_download', {
+                    gtag('event', 'distribution_page_click', {
                         'event_category': 'engagement',
                         'event_label': btn.label,
-                        'file_name': 'Paratranz_Mod_Checker.zip'
+                        'link_url': element.href
                     });
-                    console.log('GA Event Sent: app_download from ' + btn.label);
+                    console.log('GA Event Sent: distribution_page_click from ' + btn.label);
                 }
             });
         }
